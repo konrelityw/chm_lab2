@@ -1,0 +1,107 @@
+import math
+from sympy import *
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def lagrange():
+    Xi = [0, 1.7, 3.4, 5.1]
+    Yi = []
+    for i in Xi:
+        Yi.append(math.sqrt(i))
+    print(Xi)
+    print(Yi)
+    print("Функція Лагранжа " + str(lagrangeFunction(var('x'))))
+
+    def absoluteFault():
+        x = 3
+        y = math.sqrt(x)
+        print("Абсолютна похибка " + str(abs(y - lagrangeFunction(x))))
+
+    absoluteFault()
+
+
+def newton():
+    Xi = [0, 1.7, 4.0, 5.1]
+    Yi = []
+    for i in Xi:
+        Yi.append(math.sqrt(i))
+    print(Xi)
+    print(Yi)
+    print("Функція Ньютона " + str(newtonFunction(var('x'))))
+
+    def absolutFault():
+        x = 3
+        y = math.sqrt(x)
+        print("Абсолютна похибка " + str(abs(y - newtonFunction(x))))
+
+    absolutFault()
+
+
+def lagrangeFunction(x):
+    Xi = [0, 1.7, 3.4, 5.1]
+    Yi = []
+    for i in Xi:
+        Yi.append(math.sqrt(i))
+    lagr = 0
+    i = 0
+    while i <= 3:
+        if i == 0:
+            lagr += Yi[i] * (((x - Xi[1]) * (x - Xi[2]) * (x - Xi[3])) / (
+                    (Xi[0] - Xi[1]) * (Xi[0] - Xi[2]) * (Xi[0] - Xi[3])))
+        elif i == 1:
+            lagr += Yi[i] * (((x - Xi[0]) * (x - Xi[2]) * (x - Xi[3])) / (
+                    (Xi[1] - Xi[0]) * (Xi[1] - Xi[2]) * (Xi[1] - Xi[3])))
+        elif i == 2:
+            lagr += Yi[i] * (((x - Xi[0]) * (x - Xi[1]) * (x - Xi[3])) / (
+                    (Xi[2] - Xi[0]) * (Xi[2] - Xi[1]) * (Xi[2] - Xi[3])))
+        else:
+            lagr += Yi[i] * (((x - Xi[0]) * (x - Xi[1]) * (x - Xi[2])) / (
+                    (Xi[i] - Xi[0]) * (Xi[i] - Xi[1]) * (Xi[i] - Xi[2])))
+        i += 1
+    return lagr
+
+
+def newtonFunction(x):
+    Xi = [0, 1.7, 4.0, 5.1]
+    Yi = []
+    for i in Xi:
+        Yi.append(math.sqrt(i))
+    newtn = 0
+    i = 0
+    while i <= 3:
+        if i == 0:
+            newtn += Yi[0]
+        elif i == 1:
+            newtn += ((Yi[1] - Yi[0]) / (Xi[1] - Xi[0])) * (x - Xi[0])
+        elif i == 2:
+            newtn += ((((Yi[2] - Yi[1]) / (Xi[2] - Xi[1])) - ((Yi[1] - Yi[0]) / (Xi[1] - Xi[0]))) / (Xi[2] - Xi[0])) * (
+                    x - Xi[0]) * (x - Xi[1])
+        else:
+            newtn += ((((((Yi[3] - Yi[2]) / (Xi[3] - Xi[2])) - ((Yi[2] - Yi[1]) / (Xi[2] - Xi[1]))) / (
+                    Xi[3] - Xi[1])) - (
+                               (((Yi[2] - Yi[1]) / (Xi[2] - Xi[1])) - ((Yi[1] - Yi[0]) / (Xi[1] - Xi[0]))) / (
+                               Xi[2] - Xi[0]))) / (Xi[3] - Xi[0])) * (x - Xi[0]) * (x - Xi[1]) * (x - Xi[2])
+        i += 1
+    return newtn
+
+
+def graph():
+    y = lambda x: lagrangeFunction(x)
+    y1 = lambda x: newtonFunction(x)
+    fig = plt.subplots()
+    x = np.linspace(-5, 10, 100)
+    plt.plot(x, y(x), label="Лагранж")
+    plt.plot(x, y1(x), label="Ньютон")
+    plt.legend()
+    plt.show()
+
+
+graph()
+
+print("Метод Лагранжа")
+lagrange()
+print("L(x): ", newtonFunction(3))
+print("Метод Ньютона")
+newton()
+print("L(x): ", lagrangeFunction(3))
